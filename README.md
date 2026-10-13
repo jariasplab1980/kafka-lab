@@ -1,4 +1,4 @@
-# ![kafka-lab](img/banner/kafka-lab-hero-banner.png)
+# ![kafka-lab](img/banner/kafka_lab.png)
 
 Este repositorio corresponde al trabajo práctico del curso de Apache Kafka y tiene como propósito centralizar el material académico, laboratorios, ejemplos, ejercicios y proyectos desarrollados a lo largo del curso.  
 Durante el desarrollo de las actividades se estudiarán los fundamentos de los sistemas distribuidos orientados a eventos, abordando conceptos como event streaming, productores, consumidores, tópicos, particiones, grupos de consumidores y procesamiento distribuido.  
