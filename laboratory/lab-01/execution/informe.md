@@ -8,10 +8,6 @@ Este directorio contiene las evidencias correspondientes a la ejecución del **L
 
 Verificar brokers del clúster
 
-```bash
-docker exec broker1 /opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server broker1:19092 | grep -E "^broker[0-9]"
-```
-
 **Resultado Obtenido**:  
 
 ```bash
