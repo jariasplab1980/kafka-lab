@@ -1,4 +1,4 @@
-# ![lab-01](../../../img/banner/01.png)
+# ![lab-01](../../../img/banner/lab_01.png)
 
 Este directorio contiene las evidencias correspondientes a la ejecución del **Laboratorio 01**, desarrollado como parte del curso de Apache Kafka.
 
