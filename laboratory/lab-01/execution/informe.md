@@ -144,7 +144,7 @@ estudiante@ip-192-168-166-62:/home/est2/kafka-dian/entorno$ docker exec broker3 
 -rw-r--r-- 1 appuser appuser   43 Oct 13 04:39 partition.metadata
 ```
 
-### 7.2. ¿Qué pasó con el ISR durante la caída?
+#### 7.2. ¿Qué pasó con el ISR durante la caída?
 
 El broker3 sigue siendo una réplica configurada de la partición, pero ya no forma parte del ISR porque dejó de estar sincronizado/disponible.
 
@@ -161,11 +161,11 @@ Topic: equipo10.lab01.facturacion.emitida       Partition: 1    Leader: 1       
 Topic: equipo10.lab01.facturacion.emitida       Partition: 2    Leader: 2       Replicas: 2,3,1 Isr: 2,3,1      Elr:    LastKnownElr: 
 ```
 
-### 7.3. ¿Por qué no se perdieron mensajes?
+#### 7.3. ¿Por qué no se perdieron mensajes?
 
 La partición tenía tres copias, cuando cayó broker3, todavía quedaron broker1 y broker2, copias sincronizadas permanecieron disponibles
 
 
-### 7.4. ¿Qué riesgo habría con min.insync.replicas=1 y acks=1?
+#### 7.4. ¿Qué riesgo habría con min.insync.replicas=1 y acks=1?
 
 Prioriza disponibilidad/latencia, pero aumenta el riesgo de que un mensaje confirmado se pierda si el único broker que lo recibió falla antes de replicarlo.
