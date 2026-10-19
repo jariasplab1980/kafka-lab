@@ -1,6 +1,6 @@
 # ![lab-02](../../../img/banner/lab_02.png)
 
-Este directorio contiene las evidencias correspondientes a la ejecución del **Laboratorio 01**, desarrollado como parte del curso de Apache Kafka.
+Este directorio contiene las evidencias correspondientes a la ejecución del **Laboratorio 02**, desarrollado como parte del curso de Apache Kafka.
 
 
 ## Evidencias
