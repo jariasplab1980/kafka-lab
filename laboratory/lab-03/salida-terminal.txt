@@ -1,0 +1,337 @@
+estudiante@ip-192-168-166-62:/home/est2/$ 
+estudiante@ip-192-168-166-62:/home/est2/$ 
+estudiante@ip-192-168-166-62:/home/est2/$ 
+estudiante@ip-192-168-166-62:/home/est2/$ cd equipo10/kafka-dian/entorno/
+estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ ls
+bench.py  docker-compose-lab-kafka.yml  docker-compose.override.yml  gen_eventos.py  gen_eventos.sh  productor_facturacion.py
+estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ ls -a
+.   .gen_eventos.py.swp  bench.py                      docker-compose.override.yml  gen_eventos.sh
+..  .venv                docker-compose-lab-kafka.yml  gen_eventos.py               productor_facturacion.py
+estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ source .venv/
+bin/        include/    lib/        lib64/      pyvenv.cfg  
+estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ source .venv/bin/
+Activate.ps1   activate.csh   pip            pip3.12        python3        
+activate       activate.fish  pip3           python         python3.12     
+estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ source .venv/bin/activate
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ ls
+bench.py  docker-compose-lab-kafka.yml  docker-compose.override.yml  gen_eventos.py  gen_eventos.sh  productor_facturacion.py
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ EQUIPO=equipo01
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ EQUIPO=equipo10
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ TOPIC=$EQUIPO.lab05.facturacion.emitida
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server broker1:19092 \
+  --create --topic "$TOPIC" --partitions 6 --replication-factor 3 --config min.insync.replicas=2
+Error response from daemon: container 234a4a16abbf95a7fd2f65ee29c6902c37f136b10fd6fd2b23c0d8269118af75 is not running
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker compose -f docker-compose-lab-kafka.yml ps
+NAME      IMAGE     COMMAND   SERVICE   CREATED   STATUS    PORTS
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server broker1:19092   --create --topic "$TOPIC" --partitions 6 --replication-factor 3 --config min.insync.replicas=2
+Error response from daemon: container 234a4a16abbf95a7fd2f65ee29c6902c37f136b10fd6fd2b23c0d8269118af75 is not running
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ alias kq='docker exec broker1 /opt/kafka/bin/kafka-metadata-quorum.sh --bootstrap-server broker1:19092'
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ alias kt='docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server broker1:19092'
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker compose -f docker-compose-lab-kafka.yml ps
+NAME      IMAGE     COMMAND   SERVICE   CREATED   STATUS    PORTS
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker compose -f docker-compose-lab-kafka.yml --up -d
+unknown flag: --up
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker compose -f docker-compose-lab-kafka.yml up -d
+[+] up 1/4
+[+] up 1/4er broker1  Waiting                                                                                                              41.5s
+[+] up 5/5er broker1  Waiting                                                                                                              41.8s
+ ✔ Container broker1          Healthy                                                                                                      45.4s
+ ✔ Container broker2          Healthy                                                                                                      45.8s
+ ✔ Container broker3          Healthy                                                                                                      46.3s
+ ✔ Container kafka-ui         Started                                                                                                       0.4s
+ ✔ Container bootstrap-topics Started                                                                                                       0.2s
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ 
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ 
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server broker1:19092 \
+  --create --topic "$TOPIC" --partitions 6 --replication-factor 3 --config min.insync.replicas=2
+WARNING: Due to limitations in metric names, topics with a period ('.') or underscore ('_') could collide. To avoid issues it is best to use either, but not both.
+Created topic equipo10.lab05.facturacion.emitida.
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ python3 productor_facturacion.py --topic "$TOPIC" --n 2000 --acks a
+ll
+acks=all linger=0 compression=none idempotence=False -> 2000 eventos en 6.69s = 299 ev/s, errores=0
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ python3 productor_facturacion.py --topic "$TOPIC" --n 2000 --acks all
+acks=all linger=0 compression=none idempotence=False -> 2000 eventos en 1.89s = 1060 ev/s, errores=0
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ for a in 0 1 all; do python3 codigo/productor_facturacion.py --topic "$TOPIC" --n 20000 --acks $a; done
+python3: can't open file '/home/est2/equipo10/kafka-dian/entorno/codigo/productor_facturacion.py': [Errno 2] No such file or directory
+python3: can't open file '/home/est2/equipo10/kafka-dian/entorno/codigo/productor_facturacion.py': [Errno 2] No such file or directory
+python3: can't open file '/home/est2/equipo10/kafka-dian/entorno/codigo/productor_facturacion.py': [Errno 2] No such file or directory
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ for a in 0 1 all; do python3 productor_facturacion.py --topic "$TOPIC" --n 20000 --acks $a; done
+acks=0 linger=0 compression=none idempotence=False -> 20000 eventos en 2.70s = 7418 ev/s, errores=0
+acks=1 linger=0 compression=none idempotence=False -> 20000 eventos en 11.73s = 1705 ev/s, errores=0
+acks=all linger=0 compression=none idempotence=False -> 20000 eventos en 30.04s = 666 ev/s, errores=0
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ python3 bench.py --topic "$TOPIC" --n 20000 > mediciones.md
+python3 codigo/bench.py --topic                                   
+
+
+^C
+^[[A^[[ATraceback (most recent call last):
+  File "/home/est2/equipo10/kafka-dian/entorno/bench.py", line 22, in <module>
+    print(f"| {linger} | {comp} | {correr(['--acks', 'all', '--linger', str(linger), '--compression', comp])} |")
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/est2/equipo10/kafka-dian/entorno/bench.py", line 13, in correr
+    out = subprocess.run([sys.executable, str(productor), "--topic", a.topic, "--n", str(a.n)] + args, capture_output=True, text=True).stdout
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 2115, in _communicate
+    ready = selector.select(timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/selectors.py", line 415, in select
+    fd_event_list = self._selector.poll(timeout)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
+
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ 
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ for a in 0 1 all; do python3 codigo/productor_facturacion.py --topic "$TOPIC" --n 20000 --acks $a; done
+python3: can't open file '/home/est2/equipo10/kafka-dian/entorno/codigo/productor_facturacion.py': [Errno 2] No such file or directory
+python3: can't open file '/home/est2/equipo10/kafka-dian/entorno/codigo/productor_facturacion.py': [Errno 2] No such file or directory
+python3: can't open file '/home/est2/equipo10/kafka-dian/entorno/codigo/productor_facturacion.py': [Errno 2] No such file or directory
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ python3 bench.py --topic "$TOPIC" --n 2000
+## Paso 2: acks
+| acks | ev/s |
+|---|---|
+| 0 | 5318 |
+| 1 | 3936 |
+| all | 1478 |
+
+## Paso 3: linger.ms × compression.type (acks=all)
+| linger.ms | compression | ev/s |
+|---|---|---|
+| 0 | none | 1395 |
+| 0 | snappy | 1003 |
+| 0 | zstd | 966 |
+| 20 | none | 25034 |
+| 20 | snappy | 24084 |
+| 20 | zstd | 16932 |
+| 100 | none | 26113 |
+| 100 | snappy | 21278 |
+| 100 | zstd | 26014 |
+
+Tamaño en disco por combinación: docker exec broker1 du -sh /var/lib/kafka/data/equipo10.lab05.facturacion.emitida-*
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ python3 bench.py --topic "$TOPIC" --n 2000 > mediciones.md
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ for a in 0 1 all; do python3 productor_facturacion.py --topic "$TOPIC" --n 20000 --acks $a; done
+acks=0 linger=0 compression=none idempotence=False -> 20000 eventos en 1.91s = 10463 ev/s, errores=0
+acks=1 linger=0 compression=none idempotence=False -> 20000 eventos en 5.11s = 3915 ev/s, errores=0
+acks=all linger=0 compression=none idempotence=False -> 20000 eventos en 19.24s = 1040 ev/s, errores=0
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 du -sh /var/lib/kafka/data/${TOPIC}-*  
+du: cannot access '/var/lib/kafka/data/equipo10.lab05.facturacion.emitida-*': No such file or directory
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 ls -l /var
+total 40
+drwxr-xr-x 1 root root 4096 Oct 24  2024 cache
+dr-xr-xr-x 2 root root 4096 Sep  6  2024 empty
+drwxr-xr-x 1 root root 4096 Oct 26  2024 lib
+drwxr-xr-x 2 root root 4096 Sep  6  2024 local
+drwxr-xr-x 3 root root 4096 Sep  6  2024 lock
+drwxr-xr-x 2 root root 4096 Sep  6  2024 log
+drwxr-xr-x 2 root root 4096 Sep  6  2024 mail
+drwxr-xr-x 2 root root 4096 Sep  6  2024 opt
+lrwxrwxrwx 1 root root    4 Sep  6  2024 run -> /run
+drwxr-xr-x 3 root root 4096 Sep  6  2024 spool
+drwxrwxrwt 2 root root 4096 Sep  6  2024 tmp
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 ls -l /var/lib
+total 8
+drwxrwxr-x 3 appuser root 4096 Oct 26  2024 kafka
+drwxr-xr-x 2 root    root 4096 Sep  6  2024 misc
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 ls -l /var/lib/kafka
+total 12
+drwxrwxr-x 127 appuser root 12288 Oct 27 16:47 data
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 ls -l /var/lib/kafka/data
+total 524
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __cluster_metadata-0
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-0
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-1
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-10
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-11
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-12
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-13
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-14
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-15
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-16
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-17
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-18
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-19
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-2
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-20
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-21
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-22
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:17 __consumer_offsets-23
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-24
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-25
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-26
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-27
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-28
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:17 __consumer_offsets-29
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-3
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-30
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-31
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-32
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-33
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:17 __consumer_offsets-34
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-35
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-36
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-37
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-38
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-39
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-4
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-40
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-41
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-42
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-43
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-44
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-45
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-46
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-47
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-48
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-49
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-5
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-6
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-7
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:17 __consumer_offsets-8
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 __consumer_offsets-9
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 _schemas-0
+-rw-r--r-- 1 appuser appuser  249 Sep 21 14:39 bootstrap.checkpoint
+-rw-r--r-- 1 appuser appuser   28 Oct 22 15:19 cleaner-offset-checkpoint
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:17 connect-configs-0
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-0
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-1
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-10
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-11
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-12
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-13
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-14
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-15
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-16
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-17
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-18
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-19
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-2
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-20
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-21
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-22
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-23
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-24
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-3
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-4
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-5
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-6
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-7
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-8
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-offsets-9
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-status-0
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-status-1
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-status-2
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-status-3
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 connect-status-4
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.aduanas.declaracion-importacion-0
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.aduanas.declaracion-importacion-1
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.aduanas.declaracion-importacion-2
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.auditoria.acceso-0
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.auditoria.acceso-1
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.auditoria.acceso-2
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.auditoria.acceso-3
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.auditoria.acceso-4
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.auditoria.acceso-5
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.declaracion.presentada-0
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.declaracion.presentada-1
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.declaracion.presentada-2
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.declaracion.presentada-3
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.declaracion.presentada-4
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.declaracion.presentada-5
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.facturacion.emitida-0
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:17 dian.facturacion.emitida-1
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:17 dian.facturacion.emitida-2
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:17 dian.facturacion.emitida-3
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:17 dian.facturacion.emitida-4
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 dian.facturacion.emitida-5
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo01.lab01.facturacion.emitida-0
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo01.lab01.facturacion.emitida-1
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo01.lab01.facturacion.emitida-2
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo01.lab02.declaracion.presentada-0
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo01.lab02.declaracion.presentada-1
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo01.lab02.declaracion.presentada-2
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo10.lab01.facturacion.emitida-0
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo10.lab01.facturacion.emitida-1
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo10.lab01.facturacion.emitida-2
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo10.lab04.auditoria.acceso-0
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo10.lab04.auditoria.acceso-1
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo10.lab04.auditoria.acceso-2
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo10.lab04.auditoria.acceso-3
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo10.lab04.auditoria.acceso-4
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:12 equipo10.lab04.auditoria.acceso-5
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:13 equipo10.lab05.facturacion.emitida-0
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:14 equipo10.lab05.facturacion.emitida-1
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:14 equipo10.lab05.facturacion.emitida-2
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:13 equipo10.lab05.facturacion.emitida-3
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:14 equipo10.lab05.facturacion.emitida-4
+drwxr-xr-x 2 appuser appuser 4096 Oct 27 16:14 equipo10.lab05.facturacion.emitida-5
+-rw-r--r-- 1 appuser appuser    4 Oct 27 16:46 log-start-offset-checkpoint
+-rw-r--r-- 1 appuser appuser  119 Sep 21 14:39 meta.properties
+-rw-r--r-- 1 appuser appuser 3319 Oct 27 16:46 recovery-point-offset-checkpoint
+-rw-r--r-- 1 appuser appuser 3343 Oct 27 16:47 replication-offset-checkpoint
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 ls -l /var/lib/kafka/data/${TOPIC}-*  
+ls: cannot access '/var/lib/kafka/data/equipo10.lab05.facturacion.emitida-*': No such file or directory
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 ls -l /var/lib/kafka/data/${TOPIC}*  
+ls: cannot access '/var/lib/kafka/data/equipo10.lab05.facturacion.emitida*': No such file or directory
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 ls -l /var/lib/kafka/data/${TOPIC}-0
+total 9512
+-rw-r--r-- 1 appuser appuser 10485760 Oct 27 16:35 00000000000000000000.index
+-rw-r--r-- 1 appuser appuser  9690015 Oct 27 16:36 00000000000000000000.log
+-rw-r--r-- 1 appuser appuser 10485756 Oct 27 16:35 00000000000000000000.timeindex
+-rw-r--r-- 1 appuser appuser        8 Oct 27 16:13 leader-epoch-checkpoint
+-rw-r--r-- 1 appuser appuser       43 Oct 27 16:13 partition.metadata
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 ls -l /var/lib/kafka/data/${TOPIC}
+ls: cannot access '/var/lib/kafka/data/equipo10.lab05.facturacion.emitida': No such file or directory
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 ls -l /var/lib/kafka/data/${TOPIC}%
+ls: cannot access '/var/lib/kafka/data/equipo10.lab05.facturacion.emitida%': No such file or directory
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 ls -l /var/lib/kafka/data/${TOPIC}*
+ls: cannot access '/var/lib/kafka/data/equipo10.lab05.facturacion.emitida*': No such file or directory
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ 
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 sh -c \
+  'du -sh /var/lib/kafka/data/equipo10.lab05.facturacion.emitida-*'docker exec broker1 sh -c \
+  'du -sh /var/lib/kafka/data/equipo10.lab05.facturacion.emitida-*'docker exec broker1 sh -c \
+  'du -sh /var/lib/kafka/data/equipo10.lab05.facturacion.emitida-*'
+du: cannot access '/var/lib/kafka/data/equipo10.lab05.facturacion.emitida-*docker': No such file or directory
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 sh -c \
+  'du -sh /var/lib/kafka/data/equipo10.lab05.facturacion.emitida-*'
+9.3M    /var/lib/kafka/data/equipo10.lab05.facturacion.emitida-0
+9.2M    /var/lib/kafka/data/equipo10.lab05.facturacion.emitida-1
+9.4M    /var/lib/kafka/data/equipo10.lab05.facturacion.emitida-2
+9.3M    /var/lib/kafka/data/equipo10.lab05.facturacion.emitida-3
+9.4M    /var/lib/kafka/data/equipo10.lab05.facturacion.emitida-4
+9.2M    /var/lib/kafka/data/equipo10.lab05.facturacion.emitida-5
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server broker1:19092 --describe --topic "$TOPIC".
+Error while executing topic command : Topic 'Optional[equipo10.lab05.facturacion.emitida.]' does not exist as expected
+[2026-10-27 16:54:44,171] ERROR java.lang.IllegalArgumentException: Topic 'Optional[equipo10.lab05.facturacion.emitida.]' does not exist as expected
+        at org.apache.kafka.tools.TopicCommand.ensureTopicExists(TopicCommand.java:218)
+        at org.apache.kafka.tools.TopicCommand.access$700(TopicCommand.java:81)
+        at org.apache.kafka.tools.TopicCommand$TopicService.describeTopic(TopicCommand.java:578)
+        at org.apache.kafka.tools.TopicCommand.execute(TopicCommand.java:111)
+        at org.apache.kafka.tools.TopicCommand.mainNoExit(TopicCommand.java:90)
+        at org.apache.kafka.tools.TopicCommand.main(TopicCommand.java:85)
+ (org.apache.kafka.tools.TopicCommand)
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server broker1:19092 --describe --topic "$TOPIC"
+Topic: equipo10.lab05.facturacion.emitida       TopicId: Rh4NgqCMRZG6kI98p-xFIg PartitionCount: 6       ReplicationFactor: 3    Configs: min.insync.replicas=2,unclean.leader.election.enable=false
+        Topic: equipo10.lab05.facturacion.emitida       Partition: 0    Leader: 1       Replicas: 1,2,3 Isr: 1,2,3      Elr:    LastKnownElr: 
+        Topic: equipo10.lab05.facturacion.emitida       Partition: 1    Leader: 2       Replicas: 2,3,1 Isr: 2,3,1      Elr:    LastKnownElr: 
+        Topic: equipo10.lab05.facturacion.emitida       Partition: 2    Leader: 3       Replicas: 3,1,2 Isr: 3,1,2      Elr:    LastKnownElr: 
+        Topic: equipo10.lab05.facturacion.emitida       Partition: 3    Leader: 1       Replicas: 1,3,2 Isr: 1,3,2      Elr:    LastKnownElr: 
+        Topic: equipo10.lab05.facturacion.emitida       Partition: 4    Leader: 3       Replicas: 3,2,1 Isr: 3,2,1      Elr:    LastKnownElr: 
+        Topic: equipo10.lab05.facturacion.emitida       Partition: 5    Leader: 2       Replicas: 2,1,3 Isr: 2,1,3      Elr:    LastKnownElr: 
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ python3 productor_facturacion.py --topic "$TOPIC" --n 200000 --acks all --linger 20
+acks=all linger=20 compression=none idempotence=False -> 200000 eventos en 8.00s = 24993 ev/s, errores=0
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ python3 productor_facturacion.py --topic "$TOPIC" --n 200000 --acks all --linger 20
+acks=all linger=20 compression=none idempotence=False -> 200000 eventos en 8.24s = 24270 ev/s, errores=0
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ python3 codigo/productor_facturacion.py --topic "$TOPIC" --n 200000 --acks all --linger 20 --idempotence
+python3: can't open file '/home/est2/equipo10/kafka-dian/entorno/codigo/productor_facturacion.py': [Errno 2] No such file or directory
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ python3 productor_facturacion.py --topic "$TOPIC" --n 200000 --acks all --linger 20 --idempotence
+%4|1793120483.564|GETPID|lab05-productor#producer-1| [thrd:main]: Failed to acquire idempotence PID from broker localhost:9094/2: Broker: Coordinator load in progress: retrying
+acks=all linger=20 compression=none idempotence=True -> 200000 eventos en 8.98s = 22268 ev/s, errores=0
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ TOPIC_IDEM=$EQUIPO.lab05.idem
+docker exec broker1 /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server broker1:19092 --topic "$TOPIC_IDEM" --from-beginning --timeout-ms 20000 2>/dev/null \
+  | python3 -c "import sys,json; ids=[json.loads(l)['id_evento'] for l in sys.stdin if l.strip()]; print('total',len(ids),'unicos',len(set(ids)))"
+total 0 unicos 0
+(.venv) estudiante@ip-192-168-166-62:/home/est2/equipo10/kafka-dian/entorno$ 
