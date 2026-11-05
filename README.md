@@ -8,5 +8,10 @@ Este repositorio corresponde al trabajo práctico del curso de Apache Kafka y ti
 |---|---------------|--------------------------------------------------------|-------------------------------------------------------|
 | 1 | Laboratorio 1 | Anatomía de un clúster de tres brokers                 | [Ver Informe](laboratory/lab-01/execution/informe.md) |
 | 2 | Laboratorio 2 | Clúster en modo KRaft y trazado del flujo de un evento | [Ver Informe](laboratory/lab-02/execution/informe.md) |
-| 2 | Laboratorio 3 |                                                        |                                                       |
+| 3 | Laboratorio 3 |                                                        |                                                       |
 | 4 | Laboratorio 4 | Topics, retención, cuotas y gobierno en Kafka          | [Ver Informe](laboratory/lab-04/execution/informe.md) |
+| 5 | Laboratorio 5 |                                                        |                                                       |
+| 6 | Laboratorio 6 |                                                        |                                                       |
+| 7 | Laboratorio 7 | Escalamiento de consumidores                           | [Ver Informe](laboratory/lab-04/execution/informe.md) |
+| 8 | Laboratorio 8 |                                                        |                                                       |
+

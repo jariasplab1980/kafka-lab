@@ -25,9 +25,9 @@ kt --describe --topic "$TOPIC"
 
 Identifique para la partición 0:
 
-Leader
-Replicas
-Isr
+- Leader
+- Replicas
+- Isr
 
 **Resultado Obtenido**:  
 

@@ -3,18 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+
   <title>{% if page.title %}{{ page.title }} · {% endif %}{{ site.title | default: site.github.repository_name }}</title>
   <meta name="description" content="{{ page.description | default: site.description }}">
 
+  <!-- Canonical + Open Graph -->
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  <meta property="og:title" content="{% if page.title %}{{ page.title }} · {% endif %}{{ site.title | default: site.github.repository_name }}">
+  <meta property="og:description" content="{{ page.description | default: site.description }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  {% if page.image %}<meta property="og:image" content="{{ page.image | absolute_url }}">{% endif %}
+  <meta name="twitter:card" content="summary_large_image">
+
   <style>
     :root {
+      color-scheme: light dark;
+
       --bg: #ffffff;
       --fg: #1f2328;
       --muted: #57606a;
       --border: #d0d7de;
       --accent: #0969da;
+      --accent-contrast: #ffffff;
       --code-bg: #f6f8fa;
       --header-bg: #f6f8fa;
+      --focus: #0969da;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
     @media (prefers-color-scheme: dark) {
       :root {
@@ -23,13 +39,15 @@
         --muted: #8b949e;
         --border: #30363d;
         --accent: #58a6ff;
+        --accent-contrast: #0d1117;
         --code-bg: #161b22;
         --header-bg: #161b22;
+        --focus: #58a6ff;
+        --shadow: 0 1px 3px rgba(0,0,0,0.4);
       }
     }
 
     * { box-sizing: border-box; }
-
     html { scroll-behavior: smooth; }
 
     body {
@@ -40,15 +58,43 @@
       line-height: 1.6;
       color: var(--fg);
       background: var(--bg);
+      -webkit-font-smoothing: antialiased;
     }
 
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
+    /* Foco visible y accesible */
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    /* Skip link accesible */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      background: var(--accent);
+      color: var(--accent-contrast);
+      padding: 0.5rem 1rem;
+      z-index: 100;
+      border-radius: 0 0 6px 0;
+    }
+    .skip-link:focus {
+      left: 0;
+    }
+
     header.site-header {
       border-bottom: 1px solid var(--border);
       background: var(--header-bg);
       padding: 1rem 0;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(8px);
     }
 
     .container {
@@ -77,19 +123,19 @@
       color: var(--muted);
       font-size: 0.95rem;
     }
-    nav.site-nav a:hover { color: var(--accent); text-decoration: none; }
+    nav.site-nav a:hover,
+    nav.site-nav a[aria-current="page"] { color: var(--accent); text-decoration: none; }
 
-    main {
-      padding: 2rem 0 3rem;
-    }
+    main { padding: 2rem 0 3rem; }
 
     h1, h2, h3, h4 {
       line-height: 1.25;
       margin-top: 2rem;
       margin-bottom: 0.75rem;
       font-weight: 700;
+      scroll-margin-top: 5rem; /* para anclas con header sticky */
     }
-    h1 { font-size: 2rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+    h1 { font-size: 2.5rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
     h2 { font-size: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
     h3 { font-size: 1.25rem; }
 
@@ -111,11 +157,7 @@
       overflow-x: auto;
       border: 1px solid var(--border);
     }
-    pre code {
-      background: transparent;
-      padding: 0;
-      font-size: 0.875em;
-    }
+    pre code { background: transparent; padding: 0; font-size: 0.875em; }
 
     blockquote {
       margin-left: 0;
@@ -142,9 +184,8 @@
       margin: 2rem 0;
     }
 
-    img { max-width: 100%; height: auto; }
+    img { max-width: 100%; height: auto; border-radius: 6px; }
 
-    /* Mermaid: fondo transparente para integrarse con el tema */
     .mermaid {
       text-align: center;
       margin: 1.5rem 0;
@@ -163,26 +204,35 @@
       h1 { font-size: 1.6rem; }
       h2 { font-size: 1.3rem; }
       nav.site-nav a { margin-left: 0.75rem; }
+      header.site-header { position: static; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { animation: none !important; transition: none !important; }
     }
   </style>
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Saltar al contenido</a>
+
   <header class="site-header">
     <div class="container">
       <a class="site-title" href="{{ '/' | relative_url }}">
         {{ site.title | default: site.github.repository_name | default: 'Inicio' }}
       </a>
       {% if site.nav %}
-      <nav class="site-nav">
+      <nav class="site-nav" aria-label="Navegación principal">
         {% for item in site.nav %}
-          <a href="{{ item.url | relative_url }}">{{ item.title }}</a>
+          <a href="{{ item.url | relative_url }}"
+             {% if page.url == item.url %}aria-current="page"{% endif %}>{{ item.title }}</a>
         {% endfor %}
       </nav>
       {% endif %}
     </div>
   </header>
 
-  <main>
+  <main id="main-content">
     <div class="container">
       {{ content }}
     </div>
@@ -201,19 +251,45 @@
 
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 
-    // Sincroniza el tema de Mermaid con el modo claro/oscuro del sistema
-    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const darkMQ = window.matchMedia('(prefers-color-scheme: dark)');
+    const isDark = darkMQ.matches;
+
+    // Variables de tema sincronizadas con tu paleta (ajusta a Star Trek / Supersónicos si quieres)
+    const themeVars = isDark ? {
+      background: '#0d1117',
+      primaryColor: '#161b22',
+      primaryTextColor: '#e6edf3',
+      primaryBorderColor: '#30363d',
+      lineColor: '#58a6ff',
+      secondaryColor: '#161b22',
+      tertiaryColor: '#0d1117',
+      fontFamily: 'inherit'
+    } : {
+      background: '#ffffff',
+      primaryColor: '#f6f8fa',
+      primaryTextColor: '#1f2328',
+      primaryBorderColor: '#d0d7de',
+      lineColor: '#0969da',
+      secondaryColor: '#f6f8fa',
+      tertiaryColor: '#ffffff',
+      fontFamily: 'inherit'
+    };
 
     mermaid.initialize({
       startOnLoad: true,
       theme: isDark ? 'dark' : 'default',
+      themeVariables: themeVars,
       securityLevel: 'loose',
       flowchart: { useMaxWidth: true, htmlLabels: true }
     });
 
-    // Si el usuario cambia el tema del sistema, recarga para re-renderizar
-    window.matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', () => location.reload());
+    // Re-render sin recargar toda la página
+    darkMQ.addEventListener('change', async (e) => {
+      const nextVars = e.matches ? { /* dark vars */ } : { /* light vars */ };
+      // La forma más simple y robusta: recargar. Si quieres evitar el reload,
+      // usa mermaid.initialize + re-render manual de los nodos.
+      location.reload();
+    });
   </script>
 </body>
 </html>
